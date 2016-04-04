@@ -27,19 +27,23 @@ public class SpringbootJtaApplicationTests {
 	@Test
 	public void testCommit() throws Exception {
 		exampleService.testCommit();
+
+		final Integer count = jdbcTemplate.queryForObject("select count(*) from example where id = 1", Integer.class);
+		assertNotNull(count);
+		assertEquals(1, count.intValue());
 	}
 
 	@Test
 	public void testRollback() {
 		try {
 			exampleService.testRollback();
-		} catch (final Exception e) {
-			//do nothing as we expect an exception here
+		} catch (RuntimeException e) {
+			//This is expected
 		}
 
 		//Check to see if we rolled back the insert
 		final Integer count = jdbcTemplate.queryForObject("select count(*) from example where id = 2", Integer.class);
 		assertNotNull(count);
-		assertEquals(count.intValue(), 1);
+		assertEquals(0, count.intValue());
 	}
 }
