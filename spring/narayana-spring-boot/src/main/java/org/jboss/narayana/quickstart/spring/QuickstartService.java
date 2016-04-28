@@ -44,11 +44,18 @@ public class QuickstartService {
     private RecoveryManagerService recoveryManagerService;
 
     public void demonstrateCommit(String entry) throws Exception {
-        executeDemonstration(entry, transactionManager::commit, null);
+        System.out.println("Message send: " + entry);
+        messagesService.send("Created entry '" + entry + "'");
+        //executeDemonstration(entry, transactionManager::commit, null);
+        Thread.sleep(2000);
+        System.out.println("Entries at the end: " + entriesService.getAll());
     }
 
     public void demonstrateRollback(String entry) throws Exception {
-        executeDemonstration(entry, transactionManager::rollback, null);
+        System.out.println("Message send: rollback " + entry);
+        messagesService.send("Created entry rollback '" + entry + "'");
+        Thread.sleep(2000);
+        //executeDemonstration(entry, transactionManager::rollback, null);
     }
 
     public void demonstrateCrash(String entry) throws Exception {

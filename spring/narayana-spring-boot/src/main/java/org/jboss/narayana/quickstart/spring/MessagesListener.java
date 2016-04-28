@@ -18,18 +18,28 @@ package org.jboss.narayana.quickstart.spring;
 
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 @Component
+@Transactional
 public class MessagesListener {
+    @Autowired
+    private EntriesService entriesService;
 
     public static final String QUEUE_NAME = "quickstart-messages";
 
     @JmsListener(destination = QUEUE_NAME)
-    public void onMessage(String message) {
+    public void onMessage(String message) throws Exception {
         System.out.println("Message received: " + message);
+        entriesService.create(message);
+        if (message.contains("rollback")) {
+            throw new RuntimeException(message);
+        }
     }
 
 }
