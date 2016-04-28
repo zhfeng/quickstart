@@ -35,6 +35,7 @@
     <url>http://jboss.org/jbosstm</url>
 
     <modules>
-      <module>jta</module>
+        <module>jta</module>
+        <module>narayana-spring-boot</module>
     </modules>
 </project>
