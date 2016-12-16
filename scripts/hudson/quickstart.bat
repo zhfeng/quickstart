@@ -40,48 +40,8 @@ set ORACLE_HOME=C:\hudson\workspace\%JOB_NAME%\instantclient_11_2
 set TNS_ADMIN=C:\hudson\workspace\%JOB_NAME%\instantclient_11_2\network\admin
 
 
-git clone https://github.com/jbosstm/narayana.git
-cd narayana
-set OLDWORKSPACE=%WORKSPACE%
-set WORKSPACE=%WORKSPACE%\narayana\
-set CACHED_COMMENT=%COMMENT_ON_PULL%
-set COMMENT_ON_PULL=0
-call scripts\hudson\narayana.bat -DskipTests
-if %ERRORLEVEL% NEQ 0 (set COMMENT_ON_PULL=%CACHED_COMMENT% & call:comment_on_pull "Narayana build failed %BUILD_URL%" & exit -1)
-set COMMENT_ON_PULL=%CACHED_COMMENT%
-set WORKSPACE=%OLDWORKSPACE%
-rem git checkout 4.17
-rem call build.bat clean install -DskipTests
-
-set WILDFLY_MASTER_VERSION=
-for /f "usebackq delims=<,> tokens=3" %%i in (`findstr "<version>1" jboss-as\pom.xml`) do (
-	if not defined WILDFLY_MASTER_VERSION (
-		@set WILDFLY_MASTER_VERSION=%%i
-	)
-)
-cd ..
-
-rmdir wildfly-%WILDFLY_MASTER_VERSION% /s /q
-copy narayana\jboss-as\dist\target\wildfly-%WILDFLY_MASTER_VERSION%.zip .
-unzip wildfly-%WILDFLY_MASTER_VERSION%.zip
-set JBOSS_HOME=C:\hudson\workspace\%JOB_NAME%\wildfly-%WILDFLY_MASTER_VERSION%
-copy narayana\blacktie\blacktie\target\blacktie-*-vc9x32-bin.zip .
-set BLACKTIE_DIST_HOME=C:\hudson\workspace\%JOB_NAME%\
-wget -N http://%JENKINS_HOST%/userContent/blacktie/instantclient-basiclite-win32-11.2.0.1.0.zip
-wget -N http://%JENKINS_HOST%/userContent/blacktie/instantclient-sdk-win32-11.2.0.1.0.zip
-
-rem XTS config
-copy %JBOSS_HOME%\docs\examples\configs\standalone-xts.xml %JBOSS_HOME%\standalone\configuration\
-
-rem RTS config
-copy %JBOSS_HOME%\docs\examples\configs\standalone-rts.xml %JBOSS_HOME%\standalone\configuration\
-
-rem JBTM-2820 disable the karaf build
-rem git clone https://github.com/apache/karaf apache-karaf || (call:comment_on_pull "Karaf clone failed %BUILD_URL%" & exit -1)
-rem call build.bat -f apache-karaf/pom.xml -Pfastinstall || (call:comment_on_pull "Karaf build failed %BUILD_URL%" & exit -1)
-
 echo Running quickstarts
-call build.bat clean install || (call:comment_on_pull "Pull failed %BUILD_URL%" && exit -1)
+call build.bat -f blacktie\pom.xml clean install || (call:comment_on_pull "Pull failed %BUILD_URL%" && exit -1)
 
 
 call:comment_on_pull "Pull passed %BUILD_URL%"
