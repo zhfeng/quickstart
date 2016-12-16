@@ -42,7 +42,7 @@ set TNS_ADMIN=C:\hudson\workspace\%JOB_NAME%\instantclient_11_2\network\admin
 
 echo Running quickstarts
 echo %PATH%
-mvn --version
+%M2_HOME%\bin\mvn --version
 call build.bat -f blacktie\pom.xml clean install || (call:comment_on_pull "Pull failed %BUILD_URL%" && exit -1)
 
 
