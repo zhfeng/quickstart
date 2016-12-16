@@ -16,10 +16,10 @@ rem MA  02110-1301, USA.
 
 SETLOCAL EnableDelayedExpansion
 
-set M2_HOME=c:\hudson\tools\apache-maven-3.0.3
+set M2_HOME=%WORKSPACE%\tools\maven
 set ANT_HOME=C:\hudson\tools\apache-ant-1.8.2
 set GNUWIN32_PATH=C:\hudson\gnuwin32
-set PATH=%M2_HOME%\bin\;%ANT_HOME%\bin;%GNUWIN32_PATH%\bin;%PATH%
+set PATH=%M2_HOME%\bin;%ANT_HOME%\bin;%GNUWIN32_PATH%\bin;%PATH%
 
 call:comment_on_pull "Starting tests %BUILD_URL%"
 
